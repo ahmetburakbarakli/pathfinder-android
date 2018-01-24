@@ -4,6 +4,9 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
+import android.webkit.ConsoleMessage;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.app.Activity;
@@ -25,9 +28,10 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         mPathWebViewer = findViewById(R.id.mPathWebViewer);
-        mPathWebViewer.setWebViewClient(new WebViewClient());
         mPathWebViewer.getSettings().setJavaScriptEnabled(true);
-        mPathWebViewer.loadUrl("http://google.com");
+        mPathWebViewer.setWebChromeClient(new MyWebChromeClient());
+        mPathWebViewer.getSettings().setDomStorageEnabled(true);
+        mPathWebViewer.loadUrl("http://dersprogramimapp.zz.vc");
 
         mPathSwipeRefreshLayout = findViewById(R.id.mPathSwipeRefreshLayout);
         mPathSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -82,5 +86,16 @@ public class MainActivity extends Activity {
             }
             back_pressed = System.currentTimeMillis();
         }
+    }
+}
+
+class MyWebChromeClient extends WebChromeClient
+{
+    @Override
+    public boolean onConsoleMessage(ConsoleMessage cm)
+    {
+        Log.d("CONTENT", String.format("%s @ %d: %s",
+                cm.message(), cm.lineNumber(), cm.sourceId()));
+        return true;
     }
 }
